@@ -1,88 +1,206 @@
-import Image from "next/image";
+// app/page.tsx (المكون الرئيسي المعدل)
+"use client";
+import React, { useState } from "react";
+import Carousel from "./components/Carousel";
+import { CartProvider, useCart, Product } from "./components/cart-context";
+import Header from "./components/Header";
+import LayoutSwitcher from "./components/LayoutSwitcher";
+import ProductGrid from "./components/ProductGrid";
+import CartSidebar from "./components/CartSidebar";
+import ToastNotification from "./components/ToastNotification";
+import Footer from "./components/Footer";
+import EmptyState from "./components/EmptyState";
 
-export default function Home() {
-	return (
-		<div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-			<main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-				<Image
-					className="dark:invert"
-					src="/next.svg"
-					alt="Next.js logo"
-					width={180}
-					height={38}
-					priority
-				/>
-				<ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-					<li className="mb-2 tracking-[-.01em]">
-						Get started by editing{" "}
-						<code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-							src/app/page.tsx
-						</code>
-						.
-					</li>
-					<li className="tracking-[-.01em]">
-						Save and see your changes instantly.
-					</li>
-				</ol>
+function StoreInner() {
+  const { items, add, remove, total } = useCart();
+  const [cartOpen, setCartOpen] = useState(false);
+  const [layout, setLayout] = useState("grid");
+  const [toast, setToast] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
 
-				<div className="flex gap-4 items-center flex-col sm:flex-row">
-					<a
-						className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-						href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						Read our docs
-					</a>
-				</div>
-			</main>
-			<footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image
-						aria-hidden
-						src="/file.svg"
-						alt="File icon"
-						width={16}
-						height={16}
-					/>
-					Learn
-				</a>
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image
-						aria-hidden
-						src="/window.svg"
-						alt="Window icon"
-						width={16}
-						height={16}
-					/>
-					Examples
-				</a>
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image
-						aria-hidden
-						src="/globe.svg"
-						alt="Globe icon"
-						width={16}
-						height={16}
-					/>
-					Go to nextjs.org →
-				</a>
-			</footer>
-		</div>
-	);
+  const products: Product[] = [
+     { 
+       id: 1,
+       name: "تين أحمر طازج",
+ 
+       price: "100",  
+       image: "images/product/redfig.jpg",
+       desc: "كيلو تين أحمر طبيعي 100% طازج ولذيذ. القص والتوصيل في نفس اليوم!"
+     },
+     { 
+       id: 2,
+       name: "تين أصفر طازج",
+      
+       price: "60",  
+       image: "images/product/yellowfig.jpg",
+       desc: "كيلو تين أصفر طازج طبيعي كالعسل — القص والتوصيل في نفس اليوم!"
+     },
+     { 
+       id: 3,
+       name: "فقع علبة 400 جرام",
+     
+       price: "150", 
+       image: "images/product/fq3.jpg",
+       desc: "فقع درجة أولى — وزن 400 جرام."
+     },
+     { 
+       id: 4,
+       name: "تمر صفوي (3 كيلو)",
+       
+       price: "150",  
+       image: "images/product/tmr_safaye.webp",
+       desc: "تمر صفوي فاخر — عبوة 3 كيلو."
+     },
+     { 
+       id: 5,
+       name: "تمر جلاكسي  (3 كيلو)",
+      
+       price: "150", 
+       image: "images/product/tmr_galaksy.webp",
+       desc: "تمر جلكسي فاخر — عبوة 3 كيلو."
+     },
+     { 
+       id: 6,
+       name: "تمر شيشي (3 كيلو)",
+     
+       price: "150", 
+       image: "images/product/tmr_shishi.webp",
+       desc: "تمر شيشي فاخر — عبوة 3 كيلو."
+     },
+     { 
+       id: 7,
+       name: "تمر اخلاص (3 كيلو)",
+       
+       price: "150", 
+       image: "images/product/tmr_ikhlas.webp",
+       desc: "تمر اخلاص فاخر — عبوة 3 كيلو."
+     },
+     { 
+       id: 8,
+       name: "لوز الحبان البحريني (قريباً)",
+       
+       price: "300", 
+       image: "images/product/lowz.jpg",
+       desc: "متوفر قريباً — الطلب حسب المتوفر.",
+    
+     },
+   ];
+
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()) 
+  );
+
+  function handleAdd(p: Product, qty: number = 1) {
+    try {
+      add(p, qty);
+      setCartOpen(true);
+      setToast(`${p.name} أضيفت إلى السلة`);
+      window.setTimeout(() => setToast(""), 2000);
+    } catch (err) {
+      console.error("StoreInner.handleAdd error", err);
+    }
+  }
+
+  // Listen for tracking events (CAPI) and show simple feedback to the user
+  React.useEffect(() => {
+    function onTrackingEvent(e: Event) {
+      try {
+        const detail = (e as CustomEvent).detail;
+        if (!detail) return;
+        // show error toast when server-side tracking fails
+        if (detail && detail.ok === false) {
+          const msg = `حدث خطأ في تتبع الحدث ${detail.eventName} (code: ${detail.status || 'network'})`;
+          setToast(msg);
+          window.setTimeout(() => setToast(""), 4000);
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+
+    window.addEventListener("tracking:event", onTrackingEvent as EventListener);
+    return () => window.removeEventListener("tracking:event", onTrackingEvent as EventListener);
+  }, []);
+
+  return (
+    <div dir="rtl" className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 text-gray-900 font-sans">
+      <Header
+        itemsCount={items.length}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onCartOpen={() => setCartOpen(true)}
+      />
+
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 md:py-12">
+        <div className="rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-lg sm:shadow-2xl">
+          <Carousel images={[
+            { id: 'c1', title: 'القص و التوصيل في نفس اليوم', src: '/images/carousel/cru-0.jpg' },
+            { id: 'c2', title: 'منتجات مختارة بعناية', src: '/images/carousel/cru-1.jpg' }
+          ]} />
+        </div>
+      </section>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 md:mb-12 gap-4">
+          <div>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">أحدث المنتجات</h2>
+            <p className="text-gray-600 text-sm sm:text-base mt-1 sm:mt-2">القص و التوصيل في نفس اليوم</p>
+          </div>
+          
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="text-xs sm:text-sm bg-white px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl border border-gray-300 shadow-sm">
+              عرض: <span className="font-bold text-emerald-600">
+                {layout === 'grid' ? 'شبكة' : layout === 'list' ? 'قائمة' : 'مدمج'}
+              </span>
+            </div>
+            
+            <div className="text-xs sm:text-sm text-gray-500">
+              <span className="font-bold text-emerald-600">{filteredProducts.length}</span> منتج
+            </div>
+            
+            <LayoutSwitcher
+              currentLayout={layout}
+              onLayoutChange={setLayout}
+            />
+          </div>
+        </div>
+
+        <ProductGrid
+          products={filteredProducts}
+          layout={layout}
+          onAddToCart={handleAdd}
+        />
+
+        {filteredProducts.length === 0 && (
+          <EmptyState
+            title="لم يتم العثور على منتجات"
+            message="جرب استخدام كلمات بحث مختلفة"
+          />
+        )}
+      </main>
+
+      <ToastNotification
+        message={toast}
+        isVisible={!!toast}
+      />
+
+      <CartSidebar
+        isOpen={cartOpen}
+        items={items}
+        total={total}
+        onClose={() => setCartOpen(false)}
+        onRemoveItem={remove}
+      />
+
+      <Footer />
+    </div>
+  );
+}
+
+export default function ElegantStore() {
+  return (
+    <CartProvider>
+      <StoreInner />
+    </CartProvider>
+  );
 }
